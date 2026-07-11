@@ -1,0 +1,39 @@
+# Зависимости
+node_modules/
+
+# Сборка
+dist/
+build/
+
+# База данных
+prisma/migrations/
+
+# Переменные окружения
+.env
+.env.local
+.env.production
+.env.development
+
+# Логи
+*.log
+logs/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Тесты
+coverage/
+
+# Docker
+.docker/
+
+# Временные файлы
+tmp/
+temp/

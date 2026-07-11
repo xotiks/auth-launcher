@@ -1,0 +1,72 @@
+# Docker Compose для AuthLauncher Backend
+# Запуск: docker-compose up -d
+
+services:
+  # === База данных PostgreSQL ===
+  postgres:
+    image: postgres:17-alpine
+    container_name: authlauncher-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: auth_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-auth_password}
+      POSTGRES_DB: auth_launcher
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auth_user -d auth_launcher"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - auth_network
+
+  # === Node.js Backend ===
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: authlauncher-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+      DATABASE_URL: postgresql://auth_user:${DB_PASSWORD:-auth_password}@postgres:5432/auth_launcher?schema=public
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_ACCESS_EXPIRES_IN: 15m
+      JWT_REFRESH_EXPIRES_IN: 7d
+      ARGON2_MEMORY_COST: 65536
+      ARGON2_TIME_COST: 3
+      ARGON2_PARALLELISM: 2
+      ARGON2_HASH_LENGTH: 32
+      TOTP_ISSUER: AuthLauncher
+      RATE_LIMIT_WINDOW_MS: 60000
+      RATE_LIMIT_MAX_AUTH: 5
+      RATE_LIMIT_MAX_GENERAL: 100
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - auth_network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  auth_network:
+    driver: bridge

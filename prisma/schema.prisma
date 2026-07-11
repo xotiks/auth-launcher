@@ -1,0 +1,240 @@
+// Prisma Schema для AuthLauncher
+// PostgreSQL — база данных аккаунтов и авторизации
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// === Пользователи ===
+// Основная таблица пользователей системы
+model User {
+  id        String   @id @default(uuid()) @map("id")
+  uuid      String   @unique @default(uuid()) @map("uuid")
+  login     String   @unique @map("login")
+  email     String?  @unique @map("email")
+  // Хеш пароля, созданный Argon2id
+  passwordHash String @map("password_hash")
+  // TOTP секрет для двухфакторной аутентификации
+  totpSecret String? @map("totp_secret")
+  // Включена ли двухфакторная аутентификация
+  totpEnabled Boolean @default(false) @map("totp_enabled")
+  // Статус пользователя: ACTIVE, BANNED, SUSPENDED, DELETED
+  status    UserStatus @default(ACTIVE)
+  // Роль пользователя
+  roleId    String @map("role_id")
+  role      Role  @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  // Количество неудачных попыток входа подряд
+  failedLoginAttempts Int @default(0) @map("failed_login_attempts")
+  // Время блокировки аккаунта из-за множества ошибок
+  lockedUntil DateTime? @map("locked_until")
+  // Дата и время последнего успешного входа
+  lastLoginAt DateTime? @map("last_login_at")
+  // IP адрес последнего входа
+  lastLoginIp String? @map("last_login_ip") @db.VarChar(45)
+  // Версия последнего лаунчера
+  lastLauncherVersion String? @map("last_launcher_version") @db.VarChar(20)
+  // Дата регистрации
+  createdAt DateTime @default(now()) @map("created_at")
+  // Дата обновления
+  updatedAt DateTime @updatedAt @map("updated_at")
+  // Дата мягкого удаления
+  deletedAt DateTime? @map("deleted_at")
+
+  // Связи
+  sessions         Session[]
+  refreshTokens    RefreshToken[]
+  loginHistory     LoginHistory[]
+  passwordHistory  PasswordHistory[]
+  bans             Ban[]
+  auditLogs        AuditLog[]
+
+  @@index([login])
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+  @@index([roleId])
+  @@map("users")
+}
+
+// === Роли ===
+// Роли пользователей с правами доступа
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  // Права в формате JSON массива
+  permissions Json     @default("[]")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  users    User[]
+  bans     Ban[]    @relation("AdminRole")
+
+  @@index([name])
+  @@map("roles")
+}
+
+// === Сессии ===
+// Активные сессии пользователей
+model Session {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Хеш токена сессии (сам токен не храним)
+  tokenHash String   @unique @map("token_hash")
+  // IP адрес с которого создана сессия
+  ip        String?  @map("ip") @db.VarChar(45)
+  // User-Agent браузера/лаунчера
+  userAgent String?  @map("user_agent")
+  // Дата истечения сессии
+  expiresAt DateTime @map("expires_at")
+  // Дата создания
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// === Refresh токены ===
+// Токены для обновления access токенов
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Хеш refresh токена
+  tokenHash String   @unique @map("token_hash")
+  // Отозван ли токен
+  revoked   Boolean  @default(false)
+  // Дата истечения
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+// === История входов ===
+// Логи всех попыток входа (успешных и неудачных)
+model LoginHistory {
+  id        String   @id @default(uuid())
+  userId    String?  @map("user_id")
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  // IP адрес
+  ip        String   @map("ip") @db.VarChar(45)
+  // User-Agent
+  userAgent String?  @map("user_agent")
+  // Страна (опционально, если настроено GeoIP)
+  country   String?  @map("country")
+  // Успешен ли вход
+  success   Boolean  @default(false)
+  // Причина отказа
+  failureReason String? @map("failure_reason")
+  // Время попытки
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([ip])
+  @@index([createdAt])
+  @@index([success])
+  @@map("login_history")
+}
+
+// === Баны ===
+// Блокировки пользователей
+model Ban {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Кто заблокировал
+  adminId   String   @map("admin_id")
+  admin     Role     @relation("AdminRole", fields: [adminId], references: [id], onDelete: Restrict)
+  // Причина блокировки
+  reason    String?
+  // Когда истекает блокировка (null = навсегда)
+  expiresAt DateTime? @map("expires_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([adminId])
+  @@index([expiresAt])
+  @@map("bans")
+}
+
+// === Блокировки IP ===
+// Автоматическая блокировка IP адресов
+model IpBlock {
+  id        String   @id @default(uuid())
+  // IP адрес
+  ip        String   @unique @map("ip") @db.VarChar(45)
+  // Причина блокировки
+  reason    String?
+  // Когда истекает блокировка
+  expiresAt DateTime? @map("expires_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([ip])
+  @@index([expiresAt])
+  @@map("ip_blocks")
+}
+
+// === История паролей ===
+// Предыдущие пароли для защиты от повторного использования
+model PasswordHistory {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Хеш предыдущего пароля
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("password_history")
+}
+
+// === Журнал аудита ===
+// Логи всех важных действий в системе
+model AuditLog {
+  id        String   @id @default(uuid())
+  // ID пользователя (может быть null для анонимных действий)
+  userId    String?  @map("user_id")
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  // Действие (например: LOGIN_SUCCESS, LOGIN_FAILED, PASSWORD_CHANGE, ROLE_CHANGE, etc.)
+  action    String   @map("action")
+  // Детали действия в JSON формате
+  details   Json?
+  // IP адрес
+  ip        String?  @map("ip") @db.VarChar(45)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// === Настройки ===
+// Системные настройки в формате ключ-значение
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
+
+// === Enum: Статус пользователя ===
+enum UserStatus {
+  ACTIVE
+  BANNED
+  SUSPENDED
+  DELETED
+}

@@ -1,0 +1,61 @@
+Собственная авторизация
+Для разработки собственной авторизации необходимо понимание процесса авторизации, ниже представлен процесс от входа лаунчера, до ответа на вашем сайте
+
+Как работает авторизация?
+Пользователь вводит логин и пароль в лаунчере
+Лаунчер отправляет запрос на ваш сервер авторизации
+Сервер проверяет учетные данные и отправляет ответ
+Лаунчер обрабатывает ответ и предоставляет или отказывает в доступе
+
+
+На фото представлены 4 этапа отправки уведомления. Вот описание всех 4:
+
+Запрос от лаунчера к Gml.Backend
+Curl
+JavaScript
+const myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+const raw = JSON.stringify({
+"Login": "ЛОГИН",
+"Password": "ПАРОЛЬ",
+"2FACode": "КОД_2FA"
+});
+const requestOptions = {
+method: "POST",
+headers: myHeaders,
+body: raw,
+redirect: "follow"
+};
+fetch("http://localhost:5003/api/v1/integrations/auth/signin", requestOptions)
+.then((response) => response.text())
+.then((result) => console.log(result))
+.catch((error) => console.error(error));
+
+Gml.Backend - Ваш сайт
+Curl
+JavaScript
+Пример вашего ответа
+const myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+const raw = JSON.stringify({
+"Login": "ЛОГИН",
+"Password": "ПАРОЛЬ",
+"Totp": "КОД_2FA"
+});
+const requestOptions = {
+method: "POST",
+headers: myHeaders,
+body: raw,
+redirect: "follow"
+};
+fetch("http://ВАШ_АДРЕС", requestOptions)
+.then((response) => response.text())
+.then((result) => console.log(result))
+.catch((error) => console.error(error));
+
+Собственная авторизация
+Есть возможность реализовать свою, кастомную авторизацию через Endpoint. Для этого нужно на стороне вашего сервиса реализовать Endpoint
+
+Выберите в панель управление раздел: Интеграции -> Аутентификация -> Аутентификация -> Собственная аутентификация
+Вставьте ссылку на реализованный endoint авторизации Gml.Backend - Ваш сайт
+Важно! Примеры реализации можете посмотреть на странице Github
