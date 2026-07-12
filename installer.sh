@@ -124,13 +124,19 @@ JWT_ACCESS_SECRET=$(openssl rand -base64 48 | tr -d /=+)
 JWT_REFRESH_SECRET=$(openssl rand -base64 48 | tr -d /=+)
 ADMIN_PASSWORD=$(openssl rand -base64 12 | tr -d /=+)
 
-# Создаём пользователя БД
-su - postgres -c "psql -t -c \"SELECT 1 FROM pg_roles WHERE rolname='${DB_USER}'\"" | grep -q 1 || \
-su - postgres -c "psql -c \"CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASSWORD}';\""
+# Создаём пользователя БД или обновляем пароль, если пользователь уже есть
+if su - postgres -c "psql -t -c \"SELECT 1 FROM pg_roles WHERE rolname='${DB_USER}'\"" | grep -q 1; then
+  su - postgres -c "psql -c \"ALTER ROLE ${DB_USER} WITH PASSWORD '${DB_PASSWORD}';\""
+else
+  su - postgres -c "psql -c \"CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASSWORD}';\""
+fi
 
-# Создаём базу
-su - postgres -c "psql -t -c \"SELECT 1 FROM pg_database WHERE datname='${DB_NAME}'\"" | grep -q 1 || \
-su - postgres -c "psql -c \"CREATE DATABASE ${DB_NAME} OWNER ${DB_USER};\""
+# Создаём базу или обновляем владельца, если база уже существует
+if su - postgres -c "psql -t -c \"SELECT 1 FROM pg_database WHERE datname='${DB_NAME}'\"" | grep -q 1; then
+  su - postgres -c "psql -c \"ALTER DATABASE ${DB_NAME} OWNER TO ${DB_USER};\""
+else
+  su - postgres -c "psql -c \"CREATE DATABASE ${DB_NAME} OWNER ${DB_USER};\""
+fi
 
 su - postgres -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${DB_NAME} TO ${DB_USER};\"" 2>/dev/null
 
@@ -199,7 +205,8 @@ npm_registry_setup
 
 su - $REAL_USER -c "cd ${PROJECT_DIR} && npm ci"
 su - $REAL_USER -c "cd ${PROJECT_DIR} && npx prisma generate"
-echo -e "${GREEN}  ✅ npm зависимости и Prisma Client установлены${NC}"
+su - $REAL_USER -c "cd ${PROJECT_DIR} && npm run build"
+echo -e "${GREEN}  ✅ npm зависимости, Prisma Client и сборка проекта установлены${NC}"
 
 # === 7. Миграции и seed ===
 echo -e "${YELLOW}[7/10] Настройка базы данных...${NC}"
@@ -221,7 +228,7 @@ Wants=postgresql.service
 Type=simple
 User=${REAL_USER}
 WorkingDirectory=${PROJECT_DIR}
-ExecStart=${NODE_PATH} ${PROJECT_DIR}/node_modules/.bin/npm run start
+ExecStart=${NODE_PATH} ${PROJECT_DIR}/dist/index.js
 Restart=always
 RestartSec=10
 Environment=NODE_ENV=production
