@@ -182,10 +182,21 @@ ENVEOF
 chown $REAL_USER:$REAL_USER .env 2>/dev/null || true
 echo -e "${GREEN}  ✅ .env создан (все секреты сгенерированы)${NC}"
 
-# === 6. npm зависимости ===
+# === 6. npm зависимости (с зеркалом если registry недоступен) ===
 echo -e "${YELLOW}[6/10] Установка npm зависимостей...${NC}"
-su - $REAL_USER -c "cd ${PROJECT_DIR} && npm ci 2>/dev/null || npm install"
-su - $REAL_USER -c "cd ${PROJECT_DIR} && npx prisma generate"
+
+# Пробуем основной registry, если ошибка — переключаем на зеркало
+npm_registry_setup() {
+  # Проверяем доступность npm registry
+  if curl -s --connect-timeout 5 https://registry.npmjs.org/ | grep -q "error" 2>/dev/null; then
+    echo -e "${YELLOW}  ⚡ registry.npmjs.org недоступен, использую зеркало npmmirror.com${NC}"
+    su - $REAL_USER -c "cd ${PROJECT_DIR} && npm config set registry https://registry.npmmirror.com"
+  fi
+}
+npm_registry_setup
+
+su - $REAL_USER -c "cd ${PROJECT_DIR} && npm ci 2>/dev/null || npm install 2>/dev/null || (npm config set registry https://registry.npmmirror.com && npm install)"
+su - $REAL_USER -c "cd ${PROJECT_DIR} && npx prisma generate 2>/dev/null || npm install -g prisma && npx prisma generate"
 echo -e "${GREEN}  ✅ npm зависимости и Prisma Client установлены${NC}"
 
 # === 7. Миграции и seed ===
