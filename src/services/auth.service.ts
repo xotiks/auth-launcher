@@ -8,7 +8,6 @@ import { userRepository } from '../repositories/user.repository';
 import {
   hashPassword,
   verifyPassword,
-  generateToken,
   hashToken,
 } from '../utils/crypto';
 import {

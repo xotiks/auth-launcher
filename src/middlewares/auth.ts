@@ -4,7 +4,6 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
-import { prisma } from '../database/prisma';
 import { logger } from '../utils/logger';
 import { type AuthenticatedRequest } from '../types';
 import { AuthenticationError, ForbiddenError } from '../utils/errors';

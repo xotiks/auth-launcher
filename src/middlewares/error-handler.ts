@@ -4,7 +4,7 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { logger } from '../utils/logger';
-import { AppError, ValidationError } from '../utils/errors';
+import { AppError } from '../utils/errors';
 
 /**
  * Глобальный middleware обработки ошибок

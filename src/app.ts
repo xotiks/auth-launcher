@@ -7,7 +7,6 @@ import cors from 'cors';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { config } from './config';
-import { logger } from './utils/logger';
 import { additionalSecurityHeaders, generalRateLimiter } from './middlewares/security';
 import { errorHandler, notFoundHandler } from './middlewares/error-handler';
 import authRoutes from './routes/auth.routes';

@@ -2,7 +2,6 @@
 // Экспортирует единый объект конфигурации для всего приложения
 
 import { loadEnvConfig, type EnvConfig } from './env';
-import { logger } from '../utils/logger';
 
 /**
  * Единый объект конфигурации приложения

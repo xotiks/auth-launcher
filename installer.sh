@@ -169,6 +169,9 @@ RATE_LIMIT_MAX_GENERAL=100
 # === CORS ===
 CORS_ORIGINS=http://localhost:${PORT}
 
+# === Прокси / reverse proxy ===
+TRUST_PROXY=0
+
 # === Администратор ===
 ADMIN_LOGIN=admin
 ADMIN_PASSWORD=${ADMIN_PASSWORD}
@@ -264,6 +267,9 @@ NGINXEOF
 
   certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos --email "$SSL_EMAIL" || \
   echo -e "${YELLOW}  ⚠️  SSL не удался. Сделайте позже: certbot --nginx -d ${DOMAIN}${NC}"
+
+  # Trust proxy when reverse proxy is configured
+  sed -i 's/^TRUST_PROXY=.*/TRUST_PROXY=1/' .env || true
 
   echo -e "${GREEN}  ✅ SSL настроен! https://${DOMAIN}${NC}"
 else

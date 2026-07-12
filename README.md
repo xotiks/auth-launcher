@@ -113,6 +113,7 @@ npm run dev
 | `NODE_ENV` | Режим работы | `development` |
 | `PORT` | Порт сервера | `3419` |
 | `HOST` | Хост | `0.0.0.0` |
+| `TRUST_PROXY` | Доверять X-Forwarded заголовкам | `0` |
 | `DATABASE_URL` | PostgreSQL connection string | — |
 | `JWT_ACCESS_SECRET` | Секрет для access токена | — |
 | `JWT_REFRESH_SECRET` | Секрет для refresh токена | — |

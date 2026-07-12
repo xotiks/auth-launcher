@@ -1,7 +1,7 @@
 // Контроллер GML интеграции
 // Принимает запросы от GML лаунчера, возвращает ответ в GML формате
 
-import { type Request, type Response, type NextFunction } from 'express';
+import { type Request, type Response } from 'express';
 import { gmlAdapter } from '../integrations/gml/gml.adapter';
 
 export const gmlController = {
@@ -10,7 +10,7 @@ export const gmlController = {
    * Основной эндпоинт для GML лаунчера
    * Принимает { Login, Password, Totp } и возвращает { Login, UserUuid, Message }
    */
-  async signIn(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async signIn(req: Request, res: Response): Promise<void> {
     try {
       const ip = req.ip ?? req.socket.remoteAddress ?? 'unknown';
       const userAgent = req.headers['user-agent'];

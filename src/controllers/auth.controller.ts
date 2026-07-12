@@ -3,7 +3,6 @@
 
 import { type Request, type Response, type NextFunction } from 'express';
 import { authService } from '../services/auth.service';
-import { logger } from '../utils/logger';
 import type { AuthenticatedRequest } from '../types';
 
 export const authController = {

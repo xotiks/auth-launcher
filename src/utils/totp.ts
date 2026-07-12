@@ -80,7 +80,7 @@ export function getTotpManualEntryKey(secret: string): string {
 export function verifyTotpCodeWithWindow(
   token: string,
   secret: string,
-  window: number = 1
+  _window: number = 1
 ): boolean {
   try {
     return authenticator.check(token, secret);
@@ -88,3 +88,4 @@ export function verifyTotpCodeWithWindow(
     return false;
   }
 }
+
