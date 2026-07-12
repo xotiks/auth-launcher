@@ -25,30 +25,54 @@
 
 ## 🚀 Быстрый старт
 
-### Ubuntu 25.10 / Debian 12
+### 🔥 Настоящая автономность — 2 команды (Ubuntu 25.10 / Debian 12)
 
 ```bash
-# 1. Клонируем репозиторий
-git clone https://github.com/ваш-username/auth-launcher.git
-cd auth-launcher
-
-# 2. Запускаем автоматическую установку
-# Скрипт сделает всё: установит Node.js, PostgreSQL, создаст БД, настроит сервис
-bash install.sh
+# 1. Установка (всё само: Node.js, PostgreSQL, .env, сервис)
+curl -O https://raw.githubusercontent.com/xotiks/auth-launcher/main/installer.sh
+chmod +x ./installer.sh && ./installer.sh --version v1.0.0
 ```
 
 После установки:
-- **API**: http://localhost:3000/api/v1
-- **Health Check**: http://localhost:3000/api/v1/health
+- **API**: http://localhost:5003/api/v1
+- **Health Check**: http://localhost:5003/api/v1/health
 - **Логин администратора**: admin
 - **Пароль**: будет сгенерирован и выведен скриптом
+- **JWT секреты**: сгенерированы автоматически
 
-### Docker
+### 🚀 С SSL и доменом (для публичного доступа)
 
 ```bash
-# 1. Создаём .env файл (обязательно!)
+curl -O https://raw.githubusercontent.com/xotiks/auth-launcher/main/installer.sh
+chmod +x ./installer.sh && ./installer.sh --version v1.0.0 --domain auth.example.com
+```
+
+Скрипт сам:
+- Установит Nginx как reverse proxy
+- Настроит SSL через Let's Encrypt (Certbot)
+- Привяжет домен к бекенду
+
+### 🆕 Обновление — 2 команды
+
+```bash
+curl -O https://raw.githubusercontent.com/xotiks/auth-launcher/main/updater.sh
+chmod +x ./updater.sh && ./updater.sh --version v1.0.0
+```
+
+### 🗑️ Полное удаление — 2 команды
+
+```bash
+curl -O https://raw.githubusercontent.com/xotiks/auth-launcher/main/uninstall.sh
+bash uninstall.sh
+```
+Или через установщик: `./installer.sh --remove`
+
+### 🐳 Docker
+
+```bash
+# 1. Создаём .env файл (секреты сгенерятся сами если оставить пустыми JWT_*)
 cp .env.example .env
-# Отредактируйте .env, установите свои JWT_ACCESS_SECRET и JWT_REFRESH_SECRET
+# Можно оставить JWT_ACCESS_SECRET и JWT_REFRESH_SECRET пустыми — скрипт сгенерит
 
 # 2. Запускаем
 docker-compose up -d
@@ -58,7 +82,7 @@ docker exec authlauncher-backend npx prisma db push
 docker exec authlauncher-backend npm run seed
 ```
 
-### Ручной запуск (разработка)
+### 💻 Ручной запуск (разработка)
 
 ```bash
 # 1. Устанавливаем зависимости
@@ -66,7 +90,7 @@ npm ci
 
 # 2. Создаём .env
 cp .env.example .env
-# Отредактируйте .env
+# JWT сгенерятся сами если оставить пустыми
 
 # 3. Настраиваем PostgreSQL
 # Создайте пользователя и БД

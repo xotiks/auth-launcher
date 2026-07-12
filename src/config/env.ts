@@ -11,7 +11,7 @@ import { z } from 'zod';
 const envSchema = z.object({
   // Сервер
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.coerce.number().int().positive().default(3000),
+  PORT: z.coerce.number().int().positive().default(5003),
   HOST: z.string().default('0.0.0.0'),
 
   // База данных
@@ -38,7 +38,7 @@ const envSchema = z.object({
   RATE_LIMIT_MAX_GENERAL: z.coerce.number().int().positive().default(100),
 
   // CORS
-  CORS_ORIGINS: z.string().default('http://localhost:3000'),
+  CORS_ORIGINS: z.string().default('http://localhost:5003'),
 });
 
 /**
