@@ -58,12 +58,17 @@ fi
 # node_modules не копируем, установим заново
 echo -e "${GREEN}  ✅ Файлы перенесены${NC}"
 
-# ============ 3. Установка зависимостей ============
-echo -e "${YELLOW}[3/8] Установка зависимостей...${NC}"
+# ============ 3. Исправление прав и установка зависимостей ============
+echo -e "${YELLOW}[3/8] Исправление прав и установка зависимостей...${NC}"
+
+# Сначала меняем владельца проекта на digmasrv (иначе npm не может писать)
+chown -R $SUDO_USER:$SUDO_USER "$PROJECT_DIR"
+echo -e "${GREEN}  ✅ Права исправлены${NC}"
+
 cd "$PROJECT_DIR"
 
 # Удаляем старый .npmrc и пробуем зеркало
-rm -f "$USER_HOME/.npmrc"
+rm -f "$USER_HOME/.npmrc" 2>/dev/null || true
 su - $SUDO_USER -c "cd $PROJECT_DIR && npm config set registry https://registry.npmmirror.com && npm install 2>/dev/null" || \
 su - $SUDO_USER -c "cd $PROJECT_DIR && npm install"
 
