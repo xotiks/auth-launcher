@@ -13,7 +13,7 @@ BLUE='\033[0;34m'; CYAN='\033[0;36m'; NC='\033[0m'
 
 # Версия по умолчанию
 VERSION="v1.0.0"
-PORT="5003"
+PORT="3419"
 DOMAIN=""
 SSL_EMAIL="admin@example.com"
 
@@ -30,7 +30,7 @@ while [[ $# -gt 0 ]]; do
       echo ""
       echo -e "${CYAN}Опции:${NC}"
       echo "  --version TAG      Версия для установки (по умолч. v1.0.0)"
-      echo "  --port PORT        Порт сервера (по умолч. 5003)"
+      echo "  --port PORT        Порт сервера (по умолч. 3419)"
       echo "  --domain DOMAIN    Домен для SSL (Nginx + Certbot)"
       echo "  --ssl-email EMAIL  Email для Let's Encrypt"
       echo "  --remove           Полное удаление"
