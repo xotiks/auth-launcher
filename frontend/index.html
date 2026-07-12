@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Server — Auth</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">⚡ Create Server</div>
+      <nav>
+        <a href="/" class="active">Главная</a>
+        <a href="/register.html">Регистрация</a>
+        <a href="/login.html">Вход</a>
+        <a href="/profile.html" id="profileLink" style="display:none">Профиль</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>Добро пожаловать на <span class="highlight">Create Server</span></h1>
+        <p class="subtitle">Построй свой уникальный мир вместе с нами</p>
+      </section>
+
+      <section class="info-cards">
+        <div class="card">
+          <div class="card-icon">🌐</div>
+          <h3>IP Сервера</h3>
+          <p class="card-value" id="serverIp">80.254.102.229</p>
+          <button class="copy-btn" onclick="copyIp()">Копировать IP</button>
+        </div>
+        <div class="card">
+          <div class="card-icon">👥</div>
+          <h3>Игроки онлайн</h3>
+          <p class="card-value" id="onlineCount">—</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h3>Статус сервера</h3>
+          <p class="card-value" id="serverStatus">Загрузка...</p>
+        </div>
+      </section>
+
+      <section class="about">
+        <h2>О сервере</h2>
+        <p>Create Server — это захватывающий игровой мир, где каждый может построить всё что угодно.</p>
+        <ul>
+          <li>⚡ Высокая производительность</li>
+          <li>🛡️ Античит защита</li>
+          <li>🎮 Круглосуточная поддержка</li>
+          <li>🔐 Безопасная авторизация через 2FA</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 Create Server. Все права защищены.</p>
+    </footer>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

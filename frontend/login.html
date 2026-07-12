@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход — Create Server</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">⚡ Create Server</div>
+      <nav>
+        <a href="/">Главная</a>
+        <a href="/register.html">Регистрация</a>
+        <a href="/login.html" class="active">Вход</a>
+        <a href="/profile.html" id="profileLink" style="display:none">Профиль</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="form-section">
+        <h2>Вход в аккаунт</h2>
+        <form id="loginForm" class="auth-form">
+          <div class="form-group">
+            <label for="login">Логин</label>
+            <input type="text" id="login" name="login" required minlength="3" placeholder="Ваш логин">
+          </div>
+          <div class="form-group">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" required placeholder="Ваш пароль">
+          </div>
+          <div class="form-group" id="totpGroup" style="display:none">
+            <label for="totp">Код 2FA</label>
+            <input type="text" id="totp" name="totp" placeholder="6 цифр" maxlength="6" pattern="\d{6}">
+          </div>
+          <div id="loginError" class="error-message" style="display:none"></div>
+          <button type="submit" class="btn-primary">Войти</button>
+        </form>
+        <p class="form-footer">Нет аккаунта? <a href="/register.html">Зарегистрироваться</a></p>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 Create Server. Все права защищены.</p>
+    </footer>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

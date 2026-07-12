@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Регистрация — Create Server</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">⚡ Create Server</div>
+      <nav>
+        <a href="/">Главная</a>
+        <a href="/register.html" class="active">Регистрация</a>
+        <a href="/login.html">Вход</a>
+        <a href="/profile.html" id="profileLink" style="display:none">Профиль</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="form-section">
+        <h2>Регистрация нового аккаунта</h2>
+        <form id="registerForm" class="auth-form">
+          <div class="form-group">
+            <label for="login">Логин</label>
+            <input type="text" id="login" name="login" required minlength="3" maxlength="32" placeholder="3-32 символа, латиница">
+            <small>Только латинские буквы, цифры, _ и -</small>
+          </div>
+          <div class="form-group">
+            <label for="email">Email (необязательно)</label>
+            <input type="email" id="email" name="email" placeholder="email@example.com">
+          </div>
+          <div class="form-group">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" required minlength="8" placeholder="Минимум 8 символов">
+            <small>Заглавные, строчные буквы, цифры и спецсимволы</small>
+          </div>
+          <div class="form-group">
+            <label for="passwordConfirm">Подтверждение пароля</label>
+            <input type="password" id="passwordConfirm" name="passwordConfirm" required placeholder="Повторите пароль">
+          </div>
+          <div id="registerError" class="error-message" style="display:none"></div>
+          <div id="registerSuccess" class="success-message" style="display:none"></div>
+          <button type="submit" class="btn-primary">Зарегистрироваться</button>
+        </form>
+        <p class="form-footer">Уже есть аккаунт? <a href="/login.html">Войти</a></p>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 Create Server. Все права защищены.</p>
+    </footer>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
