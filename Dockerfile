@@ -7,10 +7,10 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 # Копируем конфигурационные файлы
-COPY package.json tsconfig.json ./
+COPY package.json package-lock.json tsconfig.json ./
 
-# Устанавливаем зависимости
-RUN npm ci --only=production
+# Устанавливаем все зависимости для сборки
+RUN npm ci
 
 # Копируем исходный код
 COPY prisma/ ./prisma/
@@ -45,11 +45,11 @@ USER nodejs
 
 # Переменные окружения
 ENV NODE_ENV=production
-EXPOSE 3000
+EXPOSE 3419
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:3000/api/v1/health || exit 1
+  CMD curl -f http://localhost:3419/api/v1/health || exit 1
 
 # Запуск
 CMD ["node", "dist/index.js"]

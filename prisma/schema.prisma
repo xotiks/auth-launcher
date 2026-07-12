@@ -51,6 +51,7 @@ model User {
   loginHistory     LoginHistory[]
   passwordHistory  PasswordHistory[]
   bans             Ban[]
+  issuedBans       Ban[]    @relation("AdminBans")
   auditLogs        AuditLog[]
 
   @@index([login])
@@ -73,7 +74,6 @@ model Role {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   users    User[]
-  bans     Ban[]    @relation("AdminRole")
 
   @@index([name])
   @@map("roles")
@@ -154,7 +154,7 @@ model Ban {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   // Кто заблокировал
   adminId   String   @map("admin_id")
-  admin     Role     @relation("AdminRole", fields: [adminId], references: [id], onDelete: Restrict)
+  admin     User     @relation("AdminBans", fields: [adminId], references: [id], onDelete: Restrict)
   // Причина блокировки
   reason    String?
   // Когда истекает блокировка (null = навсегда)

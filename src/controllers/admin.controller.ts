@@ -89,7 +89,7 @@ export const adminController = {
       const ban = await prisma.ban.create({
         data: {
           userId: user.id,
-          adminId: admin.roleId,
+          adminId: admin.id,
           reason: reason ?? 'Нарушение правил',
           expiresAt: expiresInHours
             ? new Date(Date.now() + expiresInHours * 60 * 60 * 1000)

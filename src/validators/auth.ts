@@ -100,6 +100,14 @@ export const changeLoginSchema = z.object({
   password: z.string().min(1, 'Пароль обязателен для подтверждения'),
 });
 
+export const deleteAccountSchema = z.object({
+  password: z.string().min(1, 'Пароль обязателен'),
+});
+
+export const refreshTokenSchema = z.object({
+  refreshToken: z.string().min(1, 'Refresh token обязателен'),
+});
+
 /**
  * Схема запроса восстановления пароля
  */

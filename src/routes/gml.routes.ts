@@ -3,7 +3,9 @@
 
 import { Router } from 'express';
 import { gmlController } from '../controllers/gml.controller';
+import { validate } from '../middlewares/validate';
 import { authRateLimiter, authSlowDown, checkIpBlock } from '../middlewares/security';
+import { gmlAuthSchema } from '../validators/auth';
 
 const router = Router();
 
@@ -18,6 +20,7 @@ router.post(
   authRateLimiter,
   authSlowDown,
   checkIpBlock,
+  validate(gmlAuthSchema),
   gmlController.signIn
 );
 

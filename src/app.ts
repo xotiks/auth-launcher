@@ -22,9 +22,11 @@ import adminRoutes from './routes/admin.routes';
 export function createApp(): express.Application {
   const app = express();
 
-  // === Базовые middleware безопасности ===
+   // Если сервер работает за обратным прокси (Nginx) — доверяем X-Forwarded заголовкам
+   if (config.trustProxy) {
+     app.set('trust proxy', 1);
+   }
 
-  // Helmet — HTTP security headers
   app.use(
     helmet({
       contentSecurityPolicy: false, // Отключаем для API (если не отдаём HTML)

@@ -9,6 +9,7 @@ import { authRateLimiter, authSlowDown, registerRateLimiter, checkIpBlock } from
 import {
   registerSchema,
   signInSchema,
+  refreshTokenSchema,
 } from '../validators/auth';
 
 const router = Router();
@@ -47,6 +48,7 @@ router.post(
 router.post(
   '/refresh',
   authRateLimiter,
+  validate(refreshTokenSchema),
   authController.refresh
 );
 

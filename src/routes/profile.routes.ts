@@ -9,6 +9,7 @@ import { generalRateLimiter } from '../middlewares/security';
 import {
   changePasswordSchema,
   changeLoginSchema,
+  deleteAccountSchema,
 } from '../validators/auth';
 
 const router = Router();
@@ -57,6 +58,7 @@ router.delete(
   '/account',
   authenticate,
   generalRateLimiter,
+  validate(deleteAccountSchema),
   profileController.deleteAccount
 );
 

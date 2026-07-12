@@ -8,8 +8,8 @@ const CONFIG = {
   // Информация о сервере Create
   SERVER: {
     name: 'Create Server',
-    ip: '80.254.102.229',
-    domain: 'prshield.serp-hub.ru',
+    ip: 'gp-ru-2.apexnodes.xyz:24331',
+    domain: 'game.serp-hub.ru',
     version: '1.0.0',
     description: 'Игровой сервер Create — построй свой мир',
   },

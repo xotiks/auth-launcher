@@ -34,8 +34,8 @@ chmod +x ./installer.sh && ./installer.sh --version v1.0.0
 ```
 
 После установки:
-- **API**: http://localhost:5003/api/v1
-- **Health Check**: http://localhost:5003/api/v1/health
+- **API**: http://localhost:3419/api/v1
+- **Health Check**: http://localhost:3419/api/v1/health
 - **Логин администратора**: admin
 - **Пароль**: будет сгенерирован и выведен скриптом
 - **JWT секреты**: сгенерированы автоматически
@@ -111,7 +111,7 @@ npm run dev
 | Переменная | Описание | По умолчанию |
 |-----------|----------|-------------|
 | `NODE_ENV` | Режим работы | `development` |
-| `PORT` | Порт сервера | `3000` |
+| `PORT` | Порт сервера | `3419` |
 | `HOST` | Хост | `0.0.0.0` |
 | `DATABASE_URL` | PostgreSQL connection string | — |
 | `JWT_ACCESS_SECRET` | Секрет для access токена | — |
@@ -123,7 +123,7 @@ npm run dev
 | `TOTP_ISSUER` | Издатель для TOTP | `AuthLauncher` |
 | `RATE_LIMIT_MAX_AUTH` | Макс. попыток входа | `5` |
 | `RATE_LIMIT_MAX_GENERAL` | Макс. общих запросов | `100` |
-| `CORS_ORIGINS` | Разрешённые источники | `http://localhost:3000` |
+| `CORS_ORIGINS` | Разрешённые источники | `http://localhost:3419` |
 
 ---
 

@@ -39,6 +39,9 @@ const envSchema = z.object({
 
   // CORS
   CORS_ORIGINS: z.string().default('http://localhost:3419'),
+
+  // Reverse proxy
+  TRUST_PROXY: z.string().default('0'),
 });
 
 /**

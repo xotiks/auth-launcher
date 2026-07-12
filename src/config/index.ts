@@ -54,6 +54,14 @@ class AppConfig {
   }
 
   /**
+   * Нужно ли доверять proxy заголовкам (X-Forwarded-For и др.)
+   */
+  public get trustProxy(): boolean {
+    const raw = this.env.TRUST_PROXY.trim().toLowerCase();
+    return raw === '1' || raw === 'true' || raw === 'yes';
+  }
+
+  /**
    * Настройки Argon2id для хеширования паролей
    */
   public get argon2Options() {
